@@ -1,0 +1,21 @@
+{
+    "files.associations": {
+        "testhead.h": "c",
+        "utarray.h": "c",
+        "string.h": "c",
+        "stdlib.h": "c",
+        "stdio.h": "c",
+        "uthash.h": "c",
+        "utlist.h": "c",
+        "utstring.h": "c",
+        "stdarg.h": "c",
+        "stddef.h": "c",
+        "utringbuffer.h": "c",
+        "*.tcc": "c",
+        "deque": "c",
+        "string": "c",
+        "unordered_map": "c",
+        "vector": "c",
+        "ostream": "c"
+    }
+}
