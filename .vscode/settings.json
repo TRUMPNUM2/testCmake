@@ -16,6 +16,10 @@
         "string": "c",
         "unordered_map": "c",
         "vector": "c",
-        "ostream": "c"
+        "ostream": "c",
+        "time.h": "c",
+        "unistd.h": "c",
+        "error.h": "c",
+        "errno.h": "c"
     }
 }
