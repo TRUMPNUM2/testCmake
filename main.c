@@ -1,170 +1,177 @@
 #include <stdio.h>
-#include "utarray.h"
-#include "uthash.h"
-#include "utlist.h"
-#include "utringbuffer.h"
-#include "utstack.h"
-#include "utstring.h"
-#include <sys/types.h>
-#include <wait.h>
-#include <errno.h>
+#include "sum.h"
+#include <stdlib.h>
+#include <math.h>
+#include "cJSON.h"
 
-#include <unistd.h>
-
-/* 获取当前执行线程 */
-pid_t getpid(void);
-
-pid_t getppid(void);
-/* 线程终止方法，传入线程的pid */
-void exit(int status);
-/* 创建子进程 */
-pid_t fork(void);
-/* 等待子进程终止获取者停止*/
-pid_t waitpid(pid_t t, int *statuasp, int options);
-
-pid_t wait(int *statusp);
-
-// int sum (int* x,int * y);
-
-// int main(int argc,char** args){
-//     int x = 4;
-//     int y = 6;
-//     int mm = sum(&x,&y);
-//     printf("两个数的sum%d\n",mm);
-//     printf("hello world");
-//     getchar();
-//     return 0;
-// }
-int sum(int *x, int *y);
-struct hashTable
+/* Parse text to JSON, then render back to text, and print! */
+void doit(char *text)
 {
-    int key;
-    int val;
-    UT_hash_handle hh;
-};
+    char *out;
+    cJSON *json;
 
-struct hashTable *hashtable;
-
-struct hashTable *find(int ikey)
-{
-    struct hashTable *tmp;
-    HASH_FIND_INT(hashtable, &ikey, tmp);
-    return tmp;
-}
-
-struct hashTable *insert(int ikey, int ival)
-{
-    struct hashTable *it = find(ikey);
-    if (it == NULL)
+    json = cJSON_Parse(text);
+    if (!json)
     {
-        struct hashTable *tmp = malloc(sizeof(struct hashTable));
-        tmp->key = ikey, tmp->val = ival;
-        HASH_ADD_INT(hashtable, key, tmp);
-        return tmp;
+        printf("Error before: [%s]\n", cJSON_GetErrorPtr());
     }
     else
     {
-        it->val = ival;
+        out = cJSON_Print(json);
+        cJSON_Delete(json);
+        printf("%s\n", out);
+        free(out);
     }
-    return it;
 }
 
-int *twoSum(int *nums, int numsSize, int target, int *returnSize)
+/* Read a file, parse, render back, etc. */
+void dofile(char *filename)
 {
-    hashtable = NULL;
-    for (int i = 0; i < numsSize; i++)
-    {
-        struct hashTable *it = find(target - nums[i]);
-        if (it != NULL)
-        {
-            int *ret = malloc(sizeof(int) * 2);
-            ret[0] = it->val, ret[1] = i;
-            *returnSize = 2;
-            return ret;
-        }
-        insert(nums[i], i);
-    }
-    *returnSize = 0;
-    return NULL;
+    FILE *f;
+    long len;
+    char *data;
+
+    f = fopen(filename, "rb");
+    fseek(f, 0, SEEK_END);
+    len = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    data = (char *)malloc(len + 1);
+    fread(data, 1, len, f);
+    fclose(f);
+    doit(data);
+    free(data);
 }
 
-void testSum()
+/* Used by some code below as an example datatype. */
+struct record
 {
+    const char *precision;
+    double lat, lon;
+    const char *address, *city, *state, *zip, *country;
+};
 
-    int num[] = {3, 4, 234, 5436, 36, 32, 23, 2, 26526, 23};
-    int numSize = sizeof(num) / sizeof(int);
+/* Create a bunch of objects as demonstration. */
+void create_objects()
+{
+    cJSON *root, *fmt, *img, *thm, *fld;
+    char *out;
+    int i; /* declare a few. */
+    /* Our "days of the week" array: */
+    const char *strings[7] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+    /* Our matrix: */
+    int numbers[3][3] = {{0, -1, 0}, {1, 0, 0}, {0, 0, 1}};
+    /* Our "gallery" item: */
+    int ids[4] = {116, 943, 234, 38793};
+    /* Our array of "records": */
+    struct record fields[2] = {
+        {"zip", 37.7668, -1.223959e+2, "", "SAN FRANCISCO", "CA", "94107", "US"},
+        {"zip", 37.371991, -1.22026e+2, "", "SUNNYVALE", "CA", "94085", "US"}};
 
-    struct hashTable *mbuffer;
+    /* Here we construct some JSON standards, from the JSON site. */
 
-    for (size_t i = 0; i < numSize; i++)
+    /* Our "Video" datatype: */
+    root = cJSON_CreateObject();
+    cJSON_AddItemToObject(root, "name", cJSON_CreateString("Jack (\"Bee\") Nimble"));
+    cJSON_AddItemToObject(root, "format", fmt = cJSON_CreateObject());
+    cJSON_AddStringToObject(fmt, "type", "rect");
+    cJSON_AddNumberToObject(fmt, "width", 1920);
+    cJSON_AddNumberToObject(fmt, "height", 1080);
+    cJSON_AddFalseToObject(fmt, "interlace");
+    cJSON_AddNumberToObject(fmt, "frame rate", 24);
+
+    out = cJSON_Print(root);
+    cJSON_Delete(root);
+    printf("%s\n", out);
+    free(out); /* Print to text, Delete the cJSON, print it, release the string. */
+
+    /* Our "days of the week" array: */
+    root = cJSON_CreateStringArray(strings, 7);
+
+    out = cJSON_Print(root);
+    cJSON_Delete(root);
+    printf("%s\n", out);
+    free(out);
+
+    /* Our matrix: */
+    root = cJSON_CreateArray();
+    for (i = 0; i < 3; i++)
+        cJSON_AddItemToArray(root, cJSON_CreateIntArray(numbers[i], 3));
+
+    /*	cJSON_ReplaceItemInArray(root,1,cJSON_CreateString("Replacement")); */
+
+    out = cJSON_Print(root);
+    cJSON_Delete(root);
+    printf("%s\n", out);
+    free(out);
+
+    /* Our "gallery" item: */
+    root = cJSON_CreateObject();
+    cJSON_AddItemToObject(root, "Image", img = cJSON_CreateObject());
+    cJSON_AddNumberToObject(img, "Width", 800);
+    cJSON_AddNumberToObject(img, "Height", 600);
+    cJSON_AddStringToObject(img, "Title", "View from 15th Floor");
+    cJSON_AddItemToObject(img, "Thumbnail", thm = cJSON_CreateObject());
+    cJSON_AddStringToObject(thm, "Url", "http:/*www.example.com/image/481989943");
+    cJSON_AddNumberToObject(thm, "Height", 125);
+    cJSON_AddStringToObject(thm, "Width", "100");
+    cJSON_AddItemToObject(img, "IDs", cJSON_CreateIntArray(ids, 4));
+
+    out = cJSON_Print(root);
+    cJSON_Delete(root);
+    printf("%s\n", out);
+    free(out);
+
+    /* Our array of "records": */
+
+    root = cJSON_CreateArray();
+    for (i = 0; i < 2; i++)
     {
-        /* code */
-        struct hashTable *m = insert(i, num[i]);
-        if (m != NULL)
-        {
-            printf("%d,%d\n", m->key, m->val);
-        }
-        mbuffer = m;
+        cJSON_AddItemToArray(root, fld = cJSON_CreateObject());
+        cJSON_AddStringToObject(fld, "precision", fields[i].precision);
+        cJSON_AddNumberToObject(fld, "Latitude", fields[i].lat);
+        cJSON_AddNumberToObject(fld, "Longitude", fields[i].lon);
+        cJSON_AddStringToObject(fld, "Address", fields[i].address);
+        cJSON_AddStringToObject(fld, "City", fields[i].city);
+        cJSON_AddStringToObject(fld, "State", fields[i].state);
+        cJSON_AddStringToObject(fld, "Zip", fields[i].zip);
+        cJSON_AddStringToObject(fld, "Country", fields[i].country);
     }
 
-    if (mbuffer != NULL)
-    {
+    /*	cJSON_ReplaceItemInObject(cJSON_GetArrayItem(root,1),"City",cJSON_CreateIntArray(ids,4)); */
 
-        UT_hash_handle utHash = mbuffer->hh;
-        while (utHash.hh_prev != NULL) // 不是指针可以直接使用. 的形式，如果是指针就需要使用->的格式   djskldfj
-        {
-            // 输出值指针前移
-            // printf("%d\n", (int)(*utHash.key));
-            struct UT_hash_handle test = (*utHash.hh_prev);
-            printf("hello");
-            /* code */
-        }
-    }
-
-    int target = 55;
-    int returnSize = 0;
-    int xx = sum(&target, &returnSize);
-    printf("sum is %d\n", xx);
-
-    int *x = twoSum(num, numSize, target, &returnSize);
-    for (size_t i = 0; i < returnSize; i++)
-    {
-        /* code */
-        printf("第%d个数据%d\n", i, *(x + i));
-    }
-    printf("%d", *x);
+    out = cJSON_Print(root);
+    cJSON_Delete(root);
+    printf("%s\n", out);
+    free(out);
 }
 
-void forkTest()
+int main(int argc, const char *argv[])
 {
+    /* a bunch of json: */
+    char text1[] = "{\n\"name\": \"Jack (\\\"Bee\\\") Nimble\", \n\"format\": {\"type\":       \"rect\", \n\"width\":      1920, \n\"height\":     1080, \n\"interlace\":  false,\"frame rate\": 24\n}\n}";
+    char text2[] = "[\"Sunday\", \"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\"]";
+    char text3[] = "[\n    [0, -1, 0],\n    [1, 0, 0],\n    [0, 0, 1]\n	]\n";
+    char text4[] = "{\n		\"Image\": {\n			\"Width\":  800,\n			\"Height\": 600,\n			\"Title\":  \"View from 15th Floor\",\n			\"Thumbnail\": {\n				\"Url\":    \"http:/*www.example.com/image/481989943\",\n				\"Height\": 125,\n				\"Width\":  \"100\"\n			},\n			\"IDs\": [116, 943, 234, 38793]\n		}\n	}";
+    char text5[] = "[\n	 {\n	 \"precision\": \"zip\",\n	 \"Latitude\":  37.7668,\n	 \"Longitude\": -122.3959,\n	 \"Address\":   \"\",\n	 \"City\":      \"SAN FRANCISCO\",\n	 \"State\":     \"CA\",\n	 \"Zip\":       \"94107\",\n	 \"Country\":   \"US\"\n	 },\n	 {\n	 \"precision\": \"zip\",\n	 \"Latitude\":  37.371991,\n	 \"Longitude\": -122.026020,\n	 \"Address\":   \"\",\n	 \"City\":      \"SUNNYVALE\",\n	 \"State\":     \"CA\",\n	 \"Zip\":       \"94085\",\n	 \"Country\":   \"US\"\n	 }\n	 ]";
 
-    pid_t test = getpid();
-    printf("获取pid=%d\n", test);
-    /*     exit(test);
-    getchar(); */
-    pid_t pid;
-    int x = 1;
+    /* Process each json textblock by parsing, then rebuilding: */
+    doit(text1);
+    doit(text2);
+    doit(text3);
+    doit(text4);
+    doit(text5);
 
-    pid = fork();
+    /* Parse standard testfiles: */
+    /*	dofile("../../tests/test1"); */
+    /*	dofile("../../tests/test2"); */
+    /*	dofile("../../tests/test3"); */
+    /*	dofile("../../tests/test4"); */
+    /*	dofile("../../tests/test5"); */
 
-    if (pid == 0)
-    {
-        printf("child:x=%d\n", ++x);
-        pid_t child_pid = getpid();
-        printf("child process is :%d\n", child_pid);
-        exit(0);
-    }
+    /* Now some samplecode for building objects concisely: */
+    create_objects();
 
-    pid_t childoverPid = wait(NULL);
-    printf("child is over is :%d\n", childoverPid);
-    printf("parent:x= %d\n", --x);
-    exit(0);
-}
+   
 
-void testFork()
-{
-}
-
-int main(int argc, char **args)
-{
+   return 0;
 }

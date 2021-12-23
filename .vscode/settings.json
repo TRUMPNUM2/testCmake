@@ -20,6 +20,12 @@
         "time.h": "c",
         "unistd.h": "c",
         "error.h": "c",
-        "errno.h": "c"
+        "errno.h": "c",
+        "cerrno": "c",
+        "netdb.h": "c",
+        "getipbydomain.h": "c",
+        "ctype.h": "c",
+        "limits.h": "c",
+        "cjson.h": "c"
     }
 }
