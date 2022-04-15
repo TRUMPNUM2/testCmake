@@ -8,7 +8,7 @@
             "name": "gcc-7 - 生成和调试活动文件",
             "type": "cppdbg",
             "request": "launch",
-            // "program": "${fileDirname}/${fileBasenameNoExtension}",
+            // "program": "${fileDirname}/build/${fileBasenameNoExtension}",
             "program": "${command:cmake.launchTargetPath}",
             "args": [],
             "stopAtEntry": false,
@@ -30,8 +30,8 @@
             "name": "nodebug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}/${fileBasenameNoExtension}",
-            // "program": "${command:cmake.launchTargetPath}",
+            // "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "program": "${command:cmake.launchTargetPath}",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
@@ -46,6 +46,26 @@
                 }
             ],
             "preLaunchTask": "make build",
+            // "miDebuggerPath": "/usr/bin/gdb" //添加debug 路径
+        },
+        {
+            "name": "sh",
+            "type": "bashdb",
+            "request": "launch",
+            "program": "${file}",
+            // "program": "${command:cmake.launchTargetPath}",
+            "commandLineArguments": "",
+            // "args": [],
+            // "stopAtEntry": false,
+            "windows": {
+                "bashPath": "C:\\Windows\\sysnative\\bash.exe"
+            },
+            "linux": {
+                "bashPath": "bash"
+            },
+            "osx": {
+                "bashPath": "bash"
+            }
             // "miDebuggerPath": "/usr/bin/gdb" //添加debug 路径
         }
     ],

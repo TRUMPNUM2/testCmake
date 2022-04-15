@@ -3,19 +3,19 @@ project( geometry )
 
 set(CMAKE_C_STANDARD 11)
 
-# ADD_DEFINITIONS(
-# -Og -g -W -Wall -lm
-#  -Wunused-variable -Wunused-parameter -Wunused-function -Wunused
-#  -Wno-deprecated -Woverloaded-virtual -Wwrite-strings
-#  -D__WUR= -D_REENTRANT -D_FILE_OFFSET_BITS=64 -DTIXML_USE_STL 
-# )
-
 ADD_DEFINITIONS(
--lm -Og -g -W -Wall 
+-Og -g -W -Wall 
  -Wunused-variable -Wunused-parameter -Wunused-function -Wunused
  -Wno-deprecated -Woverloaded-virtual -Wwrite-strings
  -D__WUR= -D_REENTRANT -D_FILE_OFFSET_BITS=64 -DTIXML_USE_STL 
 )
+
+# ADD_DEFINITIONS(
+# -lm -Og -g -W -Wall 
+#  -Wunused-variable -Wunused-parameter -Wunused-function -Wunused
+#  -Wno-deprecated -Woverloaded-virtual -Wwrite-strings
+#  -D__WUR= -D_REENTRANT -D_FILE_OFFSET_BITS=64 -DTIXML_USE_STL 
+# )
 # 添加Eigen头文件
 # include_directories( "/usr/include/eigen3" )
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build) ## 设置输出目录

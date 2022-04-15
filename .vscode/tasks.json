@@ -4,9 +4,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "make build",//编译的项目名，build
+            "label": "make build", //编译的项目名，build
             "type": "shell",
-            "command": "cd ./build ;cmake ../ ;make",//编译命令
+            "command": "cd  ${workspaceFolder};rm build;mkdir build;cd ./build ;cmake ../ ;make", //编译命令
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -16,8 +16,11 @@
             "label": "clean",
             "type": "shell",
             "command": "make clean",
-            
-
+        },
+        {
+            "label": "sh excu",
+            "type": "shell",
+            "command": "sh",
         }
     ]
 }
