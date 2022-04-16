@@ -38,3 +38,4 @@ target_link_libraries(lib_demo -lm)
 
 
 add_executable( main main.c )
+add_executable( list list.c )
