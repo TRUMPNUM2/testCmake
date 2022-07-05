@@ -4,7 +4,7 @@ project( geometry )
 set(CMAKE_C_STANDARD 11)
 
 ADD_DEFINITIONS(
--Og -g -W -Wall 
+-O -g -W -Wall 
  -Wunused-variable -Wunused-parameter -Wunused-function -Wunused
  -Wno-deprecated -Woverloaded-virtual -Wwrite-strings
  -D__WUR= -D_REENTRANT -D_FILE_OFFSET_BITS=64 -DTIXML_USE_STL 
