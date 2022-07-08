@@ -1,0 +1,16 @@
+HTTP/1.1 200 
+Server: nginx/1.20.0
+Date: Wed, 22 Jun 2022 14:20:45 GMT
+Content-Type: application/json;charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Cache-Control: no-store
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Content-Language: zh-CN
+Cache-Control: no-cache, no-store
+
+89
+{"code":"0","message":"成功","data":["true","10-16位，必须包括数字、大小写字母和特殊字符"],"ext":null,"print":false}
+0
+

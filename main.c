@@ -12,6 +12,7 @@
 #include <netdb.h>
 #include <errno.h>
 #include <stdarg.h>
+#include "tree.h"
 
 double sum(int limit, ...);
 
@@ -500,6 +501,28 @@ typedef struct user
 int main(int argc, const char *argv[])
 {
 
+    Tree ptree;
+    initTree(&ptree);
+    Item* item = malloc(sizeof(Item));
+    puts("请输入名称");
+    char test[30] = "";
+    gets(item->petname);
+    puts("请输入类型");
+    gets(item->petkind);
+
+    addItem(item, &ptree);
+
+    puts((((&ptree)->root)->item).petname);
+
+
+    Item* item2 = malloc(sizeof(Item));
+    puts("请输入名称");
+    gets(item2->petname);
+    puts("请输入类型");
+    gets(item2->petkind);
+
+    addItem(item2, &ptree);
+
     // testNet();
     /* a bunch of json: */
     // char text1[] = "{\n\"name\": \"Jack (\\\"Bee\\\") Nimble\", \n\"format\": {\"type\":       \"rect\", \n\"width\":      1920, \n\"height\":     1080, \n\"interlace\":  false,\"frame rate\": 24\n}\n}";
@@ -530,7 +553,7 @@ int main(int argc, const char *argv[])
 
     fprintf(stdout, "sum is %.2lf", sumnum);
 
-    fprintf(stdout,"test finished");
+    fprintf(stdout, "test finished");
     // FILE *files = fopen("/home/ubuntu/cprojects/testCmake/test.red", "wb");
     // if (files == NULL)
     // {
@@ -559,7 +582,8 @@ int main(int argc, const char *argv[])
  * @param ...
  * @return double
  */
-double sum(int limit,...){
+double sum(int limit, ...)
+{
     // 定义接受的集合
     va_list ap;
     double sum = 0.0;
